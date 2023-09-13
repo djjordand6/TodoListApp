@@ -13,8 +13,8 @@ namespace TodoListApp.Controllers
         // Temp Variable to test methods
         private static List<User> users = new List<User>
         {
-            new User { Id = 1, Email = "test@test.com", Pass = "hello123" }, //No Hashing
-            new User { Id = 2, Email = "test2@testing.com", Pass = "goodbye456" }
+            new User { Id = 1, Email = "test@test.com", Pass = "hello123", Name = "Test User 1" }, //No Hashing
+            new User { Id = 2, Email = "test2@testing.com", Pass = "goodbye456", Name = "Test User 2" }
         };
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace TodoListApp.Controllers
             if(user is null)
                 return NotFound("User not found");
 
-            return Ok(user); //Should return user ID so it can be used to return all ListItem's with the corresponding UserID field
+            return Ok(user); //Should return user ID and auth token (userID used to return all ListItem's with the corresponding UserID field)
         }
 
         [HttpPost]
