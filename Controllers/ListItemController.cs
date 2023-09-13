@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Models;
+using TodoListApp.Services.ListItemService;
 
 namespace TodoListApp.Controllers
 {
@@ -8,25 +9,24 @@ namespace TodoListApp.Controllers
     [ApiController]
     public class ListItemController : ControllerBase
     {
-        // Temp Variable to test methods
-        private static List<ListItem> todo = new List<ListItem>
+
+        private readonly IListItemService _listItemService;
+
+        public ListItemController(IListItemService listItemService)
         {
-            new ListItem { Id = 1, UserId = 1, ItemText = "Test" },
-            new ListItem { Id = 2, UserId = 1, ItemText = "Test Again" },
-            new ListItem { Id = 3, UserId = 1, ItemText = "Test Again Again" },
-            new ListItem { Id = 4, UserId = 2, ItemText = "Test for user 2" }
-        };
+            _listItemService = listItemService;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<ListItem>>> GetAllTodo() //Delete method, should not retrieve for all users
         {
-            return Ok(todo);
+            return Ok(_listItemService.GetAllTodo());
         }
 
         [HttpGet("{userId}")]
         public async Task<ActionResult<List<ListItem>>> GetUserTodo(int userId)
         {
-            var items = todo.Find(x => x.UserId == userId);
+            var items = _listItemService.GetUserTodo(userId);
 
             if (items is null)
                 return NotFound("No Todo Items found!");
@@ -35,33 +35,29 @@ namespace TodoListApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<ListItem>>> AddTodo([FromBody] ListItem li)
+        public async Task<ActionResult<List<ListItem>>> AddTodo(ListItem li)
         {
-            todo.Add(li);
-            return Ok(todo);
+            return Ok(_listItemService.AddTodo(li));
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<List<ListItem>>> EditTodo(int id, ListItem req)
         {
-            var item = todo.Find(x => x.Id == id);
-            if (item is null)
+            var item = _listItemService.EditTodo(id, req);
+            if (item is null) 
                 return NotFound("Todo Item not found");
 
-            item.ItemText = req.ItemText;
-
-            return Ok(todo);
+            return Ok(item);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<ListItem>>> DeleteTodo(int id)
         {
-            var item = todo.Find(x => x.Id == id);
+            var item = _listItemService.DeleteTodo(id);
             if (item is null)
                 return NotFound("Todo Item not found");
 
-            todo.Remove(item);
-            return Ok(todo);
+            return Ok(item);
         }
     }
 }
