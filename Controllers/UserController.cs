@@ -22,24 +22,24 @@ namespace TodoListApp.Controllers
         [HttpGet]
         public async Task<ActionResult<List<User>>> GetAllUsers()
         {
-            return Ok(_userService.GetAllUsers());
+            return await _userService.GetAllUsers();
         }
 
         [HttpGet("{email} {pass}")]
         public async Task<ActionResult<User>> GetUser(String email, String pass)
         {
-            var result = _userService.GetUser(email, pass);
+            var result = await _userService.GetUser(email, pass);
 
             if(result is null)
                 return NotFound("User not found");
 
-            return Ok(result); //Should return user ID and auth token (userID used to return all ListItem's with the corresponding UserID field)
+            return result; //Should return user ID and auth token (userID used to return all ListItem's with the corresponding UserID field)
         }
 
         [HttpPost]
         public async Task<ActionResult<List<User>>> AddUser(User u)
         {
-            return Ok(_userService.AddUser(u));
+            return await _userService.AddUser(u);
         }
     }
 }
