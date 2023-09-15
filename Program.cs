@@ -1,4 +1,5 @@
 global using TodoListApp.Models;
+global using TodoListApp.Data;
 using TodoListApp.Services.ListItemService;
 using TodoListApp.Services.UserService;
 
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IListItemService, ListItemService>();
+builder.Services.AddDbContext<DataContext>();
 
 var app = builder.Build();
 
