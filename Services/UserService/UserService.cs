@@ -7,31 +7,40 @@ namespace TodoListApp.Services.UserService
     public class UserService : IUserService
     {
         // Temp Variable to test methods
-        private static List<User> users = new List<User>
-        {
-            new User { Id = 1, Email = "test@test.com", Pass = "hello123", Name = "Test User 1" }, //No Hashing
-            new User { Id = 2, Email = "test2@testing.com", Pass = "goodbye456", Name = "Test User 2" }
-        };
+        //private static List<User> users = new List<User>
+        //{
+        //    new User { Id = 1, Email = "test@test.com", Pass = "hello123", Name = "Test User 1" }, //No Hashing
+        //    new User { Id = 2, Email = "test2@testing.com", Pass = "goodbye456", Name = "Test User 2" }
+        //};
 
-        public List<User> AddUser(User u)
+        private readonly DataContext _context;
+
+        public UserService(DataContext context)
         {
-            users.Add(u);
+            _context = context;
+        }
+
+        public async Task<List<User>> AddUser(User u)
+        {
+            _context.Users.Add(u);
+            await _context.SaveChangesAsync();
+            return await _context.Users.ToListAsync();
+        }
+
+        public async Task<List<User>> GetAllUsers()
+        {
+            var users = await _context.Users.ToListAsync();
             return users;
         }
 
-        public List<User> GetAllUsers()
+        public async Task<User?> GetUser(string email, string pass)
         {
-            return users;
-        }
-
-        public User? GetUser(string email, string pass)
-        {
-            var user = users.Find(u => u.Email == email && u.Pass == pass);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Pass == pass);
 
             if (user is null)
                 return null;
 
-            return user; //Should return user ID and auth token (userID used to return all ListItem's with the corresponding UserID field)
+            return user; //Should return user ID? and auth token (userID used to return all ListItem's with the corresponding UserID field)
         }
     }
 }

@@ -4,8 +4,8 @@ namespace TodoListApp.Services.UserService
 {
     public interface IUserService
     {
-        List<User> GetAllUsers();
-        User? GetUser(String email, String pass);
-        List<User> AddUser(User u);
+        Task<List<User>> GetAllUsers();
+        Task<User?> GetUser(String email, String pass);
+        Task<List<User>> AddUser(User u);
     }
 }

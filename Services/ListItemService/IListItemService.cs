@@ -4,10 +4,10 @@ namespace TodoListApp.Services.ListItemService
 {
     public interface IListItemService
     {
-        List<ListItem> GetAllTodo();
-        List<ListItem>? GetUserTodo(int userId);
-        List<ListItem> AddTodo(ListItem li);
-        List<ListItem>? EditTodo(int id, ListItem req);
-        List<ListItem>? DeleteTodo(int id);
+        Task<List<ListItem>> GetAllTodo();
+        Task<List<ListItem>?> GetUserTodo(int userId);
+        Task<List<ListItem>> AddTodo(ListItem li);
+        Task<List<ListItem>?> EditTodo(int id, ListItem req);
+        Task<List<ListItem>?> DeleteTodo(int id);
     }
 }

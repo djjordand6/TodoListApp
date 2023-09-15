@@ -2,49 +2,61 @@
 {
     public class ListItemService : IListItemService
     {
-        private static List<ListItem> todo = new List<ListItem>
-        {
-            new ListItem { Id = 1, UserId = 1, ItemText = "Test" },
-            new ListItem { Id = 2, UserId = 1, ItemText = "Test Again" },
-            new ListItem { Id = 3, UserId = 1, ItemText = "Test Again Again" },
-            new ListItem { Id = 4, UserId = 2, ItemText = "Test for user 2" }
-        };
+        //private static List<ListItem> todo = new List<ListItem>
+        //{
+        //    new ListItem { Id = 1, UserId = 1, ItemText = "Test" },
+        //    new ListItem { Id = 2, UserId = 1, ItemText = "Test Again" },
+        //    new ListItem { Id = 3, UserId = 1, ItemText = "Test Again Again" },
+        //    new ListItem { Id = 4, UserId = 2, ItemText = "Test for user 2" }
+        //};
 
-        public List<ListItem> AddTodo(ListItem li)
+        private readonly DataContext _context;
+
+        public ListItemService(DataContext context)
         {
-            todo.Add(li);
-            return todo;
+            _context = context;
         }
 
-        public List<ListItem>? DeleteTodo(int id)
+        public async Task<List<ListItem>> AddTodo(ListItem li)
         {
-            var item = todo.Find(x => x.Id == id);
+            _context.ListItems.Add(li);
+            await _context.SaveChangesAsync();
+            return await _context.ListItems.ToListAsync();
+        }
+
+        public async Task<List<ListItem>?> DeleteTodo(int id)
+        {
+            var item = await _context.ListItems.FindAsync(id);
             if (item is null)
                 return null;
 
-            todo.Remove(item);
-            return todo;
+            _context.ListItems.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return await _context.ListItems.ToListAsync();
         }
 
-        public List<ListItem>? EditTodo(int id, ListItem req)
+        public async Task<List<ListItem>?> EditTodo(int id, ListItem req)
         {
-            var item = todo.Find(x => x.Id == id);
+            var item = await _context.ListItems.FindAsync(id);
             if (item is null)
                 return null;
 
             item.ItemText = req.ItemText;
 
-            return todo;
+            await _context.SaveChangesAsync();
+
+            return await _context.ListItems.ToListAsync();
         }
 
-        public List<ListItem> GetAllTodo()
+        public async Task<List<ListItem>> GetAllTodo()
         {
-            return todo;
+            return await _context.ListItems.ToListAsync();
         }
 
-        public List<ListItem>? GetUserTodo(int userId)
+        public async Task<List<ListItem>?> GetUserTodo(int userId)
         {
-            var items = todo.FindAll(x => x.UserId == userId);
+            var items = await _context.ListItems.Where(li => li.UserId == userId).ToListAsync();
 
             if (items is null)
                 return null;
