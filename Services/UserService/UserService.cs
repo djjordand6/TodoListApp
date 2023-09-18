@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TodoListApp.Models;
+using TodoListApp.Functions;
+using System.Collections.Generic;
 
 namespace TodoListApp.Services.UserService
 {
@@ -22,6 +24,9 @@ namespace TodoListApp.Services.UserService
 
         public async Task<List<User>> AddUser(User u)
         {
+            string hp = Hasher.GetHash(u.Pass);
+            u.Pass = hp;
+
             _context.Users.Add(u);
             await _context.SaveChangesAsync();
             return await _context.Users.ToListAsync();
@@ -35,7 +40,9 @@ namespace TodoListApp.Services.UserService
 
         public async Task<User?> GetUser(string email, string pass)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Pass == pass);
+            var hp = Hasher.GetHash(pass);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Pass == hp); //(u => u.Email == email && Hasher.VerifyHash(pass, u.Pass)
 
             if (user is null)
                 return null;
