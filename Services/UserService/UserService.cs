@@ -24,7 +24,8 @@ namespace TodoListApp.Services.UserService
 
         public async Task<List<User>> AddUser(User u)
         {
-            string hp = Hasher.GetHash(u.Pass);
+            //string hp = Hasher.GetHash(u.Pass);
+            string hp = BCrypt.Net.BCrypt.HashPassword(u.Pass);
             u.Pass = hp;
 
             _context.Users.Add(u);
@@ -40,11 +41,11 @@ namespace TodoListApp.Services.UserService
 
         public async Task<User?> GetUser(string email, string pass)
         {
-            var hp = Hasher.GetHash(pass);
+            //var hp = Hasher.GetHash(pass);
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Pass == hp); //(u => u.Email == email && Hasher.VerifyHash(pass, u.Pass)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email); //(u => u.Email == email && Hasher.VerifyHash(pass, u.Pass) //u.Pass == hp
 
-            if (user is null)
+            if (user is null || !BCrypt.Net.BCrypt.Verify(pass, user.Pass))
                 return null;
 
             return user; //Should return user ID? and auth token (userID used to return all ListItem's with the corresponding UserID field)
