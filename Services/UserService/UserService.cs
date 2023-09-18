@@ -3,6 +3,11 @@ using System.Threading.Tasks;
 using TodoListApp.Models;
 using TodoListApp.Functions;
 using System.Collections.Generic;
+using System.Text;
+using Microsoft.Extensions.ObjectPool;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace TodoListApp.Services.UserService
 {
@@ -16,10 +21,13 @@ namespace TodoListApp.Services.UserService
         //};
 
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
 
-        public UserService(DataContext context)
+        public UserService(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
+
         }
 
         public async Task<List<User>> AddUser(User u)
@@ -39,7 +47,7 @@ namespace TodoListApp.Services.UserService
             return users;
         }
 
-        public async Task<User?> GetUser(string email, string pass)
+        public async Task<string?> GetUser(string email, string pass)
         {
             //var hp = Hasher.GetHash(pass);
 
@@ -48,7 +56,26 @@ namespace TodoListApp.Services.UserService
             if (user is null || !BCrypt.Net.BCrypt.Verify(pass, user.Pass))
                 return null;
 
-            return user; //Should return user ID? and auth token (userID used to return all ListItem's with the corresponding UserID field)
+            string token = CreateToken(user);
+
+            return token; //Should return user ID? and auth token (userID used to return all ListItem's with the corresponding UserID field)
+        }
+
+        public string CreateToken(User u)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, u.Email)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("Jwt:Token").Value!));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(10), signingCredentials: creds);
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
         }
     }
 }
