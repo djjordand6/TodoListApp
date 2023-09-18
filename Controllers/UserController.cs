@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
+using System.Text;
 using TodoListApp.Models;
 using TodoListApp.Services.UserService;
 
@@ -13,10 +17,12 @@ namespace TodoListApp.Controllers
     {
 
         private readonly IUserService _userService;
+        private readonly IConfiguration _config;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IConfiguration config)
         {
             _userService = userService;
+            _config = config;
         }
 
         [HttpGet]
@@ -26,7 +32,7 @@ namespace TodoListApp.Controllers
         }
 
         [HttpGet("{email} {pass}")]
-        public async Task<ActionResult<User>> GetUser(String email, String pass)
+        public async Task<ActionResult<string>> GetUser(String email, String pass)
         {
             var result = await _userService.GetUser(email, pass);
 
