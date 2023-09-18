@@ -6,9 +6,9 @@ namespace TodoListApp.Functions
 {
     public class Hasher
     {
-        private SHA256 ha = SHA256.Create();
+        private static SHA256 ha = SHA256.Create();
 
-        public string GetHash(string s)
+        public static string GetHash(string s)
         {
             byte[] data = ha.ComputeHash(Encoding.UTF8.GetBytes(s));
 
@@ -22,7 +22,7 @@ namespace TodoListApp.Functions
             return sb.ToString();
         }
 
-        public bool VerifyHash(string s, string hash)
+        public static bool VerifyHash(string s, string hash)
         {
             var inputHash = GetHash(s);
 
@@ -32,3 +32,5 @@ namespace TodoListApp.Functions
         }
     }
 }
+
+//Likely to be replaced with BCrypt
