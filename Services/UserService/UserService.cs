@@ -65,7 +65,7 @@ namespace TodoListApp.Services.UserService
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, u.Email),
+                new Claim(ClaimTypes.Email, u.Email)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("Jwt:Token").Value!));

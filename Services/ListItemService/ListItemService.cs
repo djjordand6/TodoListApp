@@ -58,7 +58,7 @@
         {
             var items = await _context.ListItems.Where(li => li.UserId == userId).ToListAsync();
 
-            if (items is null || items is [])
+            if (items is null)
                 return null;
 
             return items;
