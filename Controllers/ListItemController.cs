@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using TodoListApp.Models;
 using TodoListApp.Services.ListItemService;
 
@@ -23,7 +24,7 @@ namespace TodoListApp.Controllers
             return await _listItemService.GetAllTodo();
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("{userId}"), Authorize]
         public async Task<ActionResult<List<ListItem>>> GetUserTodo(int userId)
         {
             var items = await _listItemService.GetUserTodo(userId);
@@ -34,13 +35,13 @@ namespace TodoListApp.Controllers
             return items;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public async Task<ActionResult<List<ListItem>>> AddTodo(ListItem li)
         {
             return await _listItemService.AddTodo(li);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize]
         public async Task<ActionResult<List<ListItem>>> EditTodo(int id, ListItem req)
         {
             var item = await _listItemService.EditTodo(id, req);
@@ -50,7 +51,7 @@ namespace TodoListApp.Controllers
             return item;
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<ActionResult<List<ListItem>>> DeleteTodo(int id)
         {
             var item = await _listItemService.DeleteTodo(id);
