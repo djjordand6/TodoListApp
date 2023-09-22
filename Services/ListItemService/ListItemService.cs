@@ -1,4 +1,7 @@
-﻿namespace TodoListApp.Services.ListItemService
+﻿using System.Reflection.Metadata.Ecma335;
+using TodoListApp.Models;
+
+namespace TodoListApp.Services.ListItemService
 {
     public class ListItemService : IListItemService
     {
@@ -19,6 +22,8 @@
 
         public async Task<List<ListItem>> AddTodo(ListItem li)
         {
+            li.Created = DateTime.Now;
+
             _context.ListItems.Add(li);
             await _context.SaveChangesAsync();
             return await _context.ListItems.ToListAsync();
@@ -43,6 +48,7 @@
                 return null;
 
             item.ItemText = req.ItemText;
+            item.Order = req.Order;
 
             await _context.SaveChangesAsync();
 
@@ -63,6 +69,22 @@
 
             return items;
 
+        }
+
+        public async Task<ListItem?> SetTodoStatus(int id)
+        {
+            var item = await _context.ListItems.FindAsync(id);
+            if (item is null)
+                return null;
+
+            if (item.IsDone is false)
+                item.IsDone = true;
+            else
+                item.IsDone = false;
+
+            await _context.SaveChangesAsync();
+
+            return item;
         }
     }
 }

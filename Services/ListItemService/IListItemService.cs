@@ -9,5 +9,6 @@ namespace TodoListApp.Services.ListItemService
         Task<List<ListItem>> AddTodo(ListItem li);
         Task<List<ListItem>?> EditTodo(int id, ListItem req);
         Task<List<ListItem>?> DeleteTodo(int id);
+        Task<ListItem?> SetTodoStatus(int id);
     }
 }
