@@ -61,7 +61,7 @@ namespace TodoListApp.Controllers
             return item;
         }
 
-        [HttpPut("{id}"), Authorize]
+        [HttpPatch("{id}"), Authorize]
         public async Task<ActionResult<ListItem>> SetTodoStatus(int id)
         {
             var item = await _listItemService.SetTodoStatus(id);
