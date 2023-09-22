@@ -62,7 +62,11 @@ namespace TodoListApp.Services.ListItemService
 
         public async Task<List<ListItem>?> GetUserTodo(int userId)
         {
-            var items = await _context.ListItems.Where(li => li.UserId == userId).ToListAsync();
+            var items = await _context.ListItems
+                .OrderBy(li => li.Order)
+                .ThenBy(li => li.Created)
+                .Where(li => li.UserId == userId)
+                .ToListAsync();
 
             if (items is null || items is [])
                 return null;
