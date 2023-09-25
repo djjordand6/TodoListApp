@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TodoListApp.Models;
 using TodoListApp.Services.ListItemService;
+using System.Security.Claims;
 
 namespace TodoListApp.Controllers
 {
@@ -18,16 +19,18 @@ namespace TodoListApp.Controllers
             _listItemService = listItemService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<ListItem>>> GetAllTodo() //Delete method, should not retrieve for all users
-        {
-            return await _listItemService.GetAllTodo();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<List<ListItem>>> GetAllTodo() //Delete method, should not retrieve for all users
+        //{
+        //    return await _listItemService.GetAllTodo();
+        //}
 
-        [HttpGet("{userId}"), Authorize]
-        public async Task<ActionResult<List<ListItem>>> GetUserTodo(int userId)
+        [HttpGet, Authorize]
+        public async Task<ActionResult<List<ListItem>>> GetUserTodo()
         {
-            var items = await _listItemService.GetUserTodo(userId);
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var items = await _listItemService.GetUserTodo(Int32.Parse(userId));
 
             if (items is null)
                 return NotFound("No Todo Items found!");
