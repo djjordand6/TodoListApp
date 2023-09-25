@@ -22,8 +22,6 @@ namespace TodoListApp.Services.ListItemService
 
         public async Task<List<ListItem>> AddTodo(ListItem li)
         {
-            li.Created = DateTime.Now;
-
             _context.ListItems.Add(li);
             await _context.SaveChangesAsync();
             return await _context.ListItems.ToListAsync();
