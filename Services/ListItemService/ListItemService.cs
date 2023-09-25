@@ -55,10 +55,10 @@ namespace TodoListApp.Services.ListItemService
             return await _context.ListItems.ToListAsync();
         }
 
-        public async Task<List<ListItem>> GetAllTodo()
-        {
-            return await _context.ListItems.ToListAsync();
-        }
+        //public async Task<List<ListItem>> GetAllTodo()
+        //{
+        //    return await _context.ListItems.ToListAsync();
+        //}
 
         public async Task<List<ListItem>?> GetUserTodo(int userId)
         {
