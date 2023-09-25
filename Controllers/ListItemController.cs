@@ -41,6 +41,10 @@ namespace TodoListApp.Controllers
         [HttpPost, Authorize]
         public async Task<ActionResult<List<ListItem>>> AddTodo(ListItem li)
         {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            li.UserId = Int32.Parse(userId);
+            li.Created = DateTime.Now;
             return await _listItemService.AddTodo(li);
         }
 
