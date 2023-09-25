@@ -2,7 +2,7 @@
 {
     public class ListItem
     {
-        public required int Id { get; set; }
+        public int Id { get; set; }
 
         public required int UserId { get; set; }
 
