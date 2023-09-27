@@ -1,5 +1,7 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 using TodoListApp.Models;
+
 
 namespace TodoListApp.Services.ListItemService
 {
@@ -27,10 +29,11 @@ namespace TodoListApp.Services.ListItemService
             return await _context.ListItems.ToListAsync();
         }
 
-        public async Task<List<ListItem>?> DeleteTodo(int id)
+        public async Task<List<ListItem>?> DeleteTodo(int id, int userId)
         {
             var item = await _context.ListItems.FindAsync(id);
-            if (item is null)
+
+            if (item is null || item.UserId != userId)
                 return null;
 
             _context.ListItems.Remove(item);
@@ -39,10 +42,10 @@ namespace TodoListApp.Services.ListItemService
             return await _context.ListItems.ToListAsync();
         }
 
-        public async Task<List<ListItem>?> EditTodo(int id, ListItem req)
+        public async Task<List<ListItem>?> EditTodo(int id, ListItem req, int userId)
         {
             var item = await _context.ListItems.FindAsync(id);
-            if (item is null)
+            if (item is null || item.UserId != userId)
                 return null;
 
             item.ItemText = req.ItemText;
@@ -73,10 +76,10 @@ namespace TodoListApp.Services.ListItemService
 
         }
 
-        public async Task<ListItem?> SetTodoStatus(int id)
+        public async Task<ListItem?> SetTodoStatus(int id, int userId)
         {
             var item = await _context.ListItems.FindAsync(id);
-            if (item is null)
+            if (item is null || item.UserId != userId)
                 return null;
 
             if (item.IsDone is false)
