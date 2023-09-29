@@ -31,27 +31,34 @@ namespace TodoListApp.Services.ListItemService
 
         public async Task<List<ListItem>?> DeleteTodo(int id, int userId)
         {
-            var item = await _context.ListItems.FindAsync(id);
+            //var item = await _context.ListItems.FindAsync(id);
 
-            if (item is null || item.UserId != userId)
-                return null;
+            //if (item is null || item.UserId != userId)
+            //    return null;
 
-            _context.ListItems.Remove(item);
-            await _context.SaveChangesAsync();
+            //_context.ListItems.Remove(item);
+            //await _context.SaveChangesAsync();
+
+            await _context.ListItems.Where(li => li.Id == id && li.UserId == userId).ExecuteDeleteAsync();
 
             return await _context.ListItems.ToListAsync();
         }
 
         public async Task<List<ListItem>?> EditTodo(int id, ListItem req, int userId)
         {
-            var item = await _context.ListItems.FindAsync(id);
-            if (item is null || item.UserId != userId)
-                return null;
+            //var item = await _context.ListItems.FindAsync(id);
+            //if (item is null || item.UserId != userId)
+            //    return null;
 
-            item.ItemText = req.ItemText;
-            item.Order = req.Order;
+            //item.ItemText = req.ItemText;
+            //item.Order = req.Order;
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
+
+            await _context.ListItems.Where(li => li.Id == id && li.UserId == userId)
+                .ExecuteUpdateAsync(setters => setters
+                .SetProperty(p => p.ItemText, req.ItemText)
+                .SetProperty(p => p.Order, req.Order));
 
             return await _context.ListItems.ToListAsync();
         }
@@ -78,16 +85,23 @@ namespace TodoListApp.Services.ListItemService
 
         public async Task<ListItem?> SetTodoStatus(int id, int userId)
         {
+            //var item = await _context.ListItems.FindAsync(id);
+            //if (item is null || item.UserId != userId)
+            //    return null;
+
+            //if (item.IsDone is false)
+            //    item.IsDone = true;
+            //else
+            //    item.IsDone = false;
+
+            //await _context.SaveChangesAsync();
+
             var item = await _context.ListItems.FindAsync(id);
             if (item is null || item.UserId != userId)
                 return null;
 
-            if (item.IsDone is false)
-                item.IsDone = true;
-            else
-                item.IsDone = false;
-
-            await _context.SaveChangesAsync();
+            await _context.ListItems.Where(li => li.Id == id && li.UserId == userId)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.IsDone, p => !p.IsDone));
 
             return item;
         }
